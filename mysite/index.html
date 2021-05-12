@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<!--
+	Miniport by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Miniport by HTML5 UP</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+</head>
+
+<body class="is-preload">
+
+	<!-- Nav -->
+	<nav id="nav">
+		<ul class="container">
+			<li><a href="#global">global</a></li>
+			<li><a href="#india">India</a></li>
+			<li><a href="#state">Statewise</a></li>
+		</ul>
+	</nav>
+
+	<!-- Home -->
+	<article id="start" class="wrapper style1">
+		<div class="container">
+			<div class="row">
+				<div class="col-4 col-5-large col-12-medium">
+					<span class="image fit"><img src="images/covid19.jpg" alt="" /></span>
+				</div>
+				<div class="col-8 col-7-large col-12-medium">
+					<header>
+						<h1><strong>WE WILL SURVIVE COVID</strong>.</h1>
+					</header>
+					<p>This pandemic <strong>covid19</strong> has overthrown over lives into a turmoil</p>
+					<a href="#work" class="button large scrolly">see global informatics on covid</a>
+				</div>
+			</div>
+		</div>
+	</article>
+
+	<!-- Work -->
+	<article id="global" class="wrapper style2">
+		<div class="container">
+			<header>
+				<h2>Under construction</h2>
+				<p>this section will show data of all countries</p>
+			</header>
+
+
+
+			<footer>
+				<!-- <p>Lorem ipsum dolor sit sapien vestibulum ipsum primis?</p> -->
+				<a href="#india" class="button large scrolly">view COVID-19 data of India</a>
+			</footer>
+		</div>
+	</article>
+
+	<!-- Portfolio -->
+	<article id="portfolio" class="wrapper style3">
+		<div class="container">
+			<header>
+				<h2>COVID-19 in INDIA</h2>
+				<p>insert a good quote/sentence</p>
+			</header>
+
+			<style>
+				table {
+					border-collapse: collapse;
+					width: 100%;
+					color: #8135ae;
+					font-family: monospace;
+					font-size: 25px;
+					text-align: middle;
+					padding: 50px;
+				}
+
+				th {
+					background-color: #8135ae;
+					height: 120%;
+					color: white;
+				}
+
+				tr {
+					border: solid;
+					border-width: 1px 0;
+					background-color: #f2f2f2
+				}
+
+				table {
+					border: none;
+					border-collapse: collapse;
+				}
+
+				table td {
+					border-left: 1px solid #000;
+				}
+
+				table td:first-child {
+					border-left: none;
+				}
+
+				tr:hover {
+					background-color: #f91ab6;
+				}
+
+				title {
+					color: #f91ab6;
+				}
+			</style>
+			<table>
+				<tr>
+					<th>Total Cases</th>
+					<th>Recovered patient count</th>
+					<th>Total deaths(due to covid19)</th>
+				</tr>
+
+				<?php
+		
+				$db_host        = '127.0.0.1';
+				$db_user        = 'fastbyte';
+				$db_pass        = 'aldee220202';
+				$db_database    = 'test';
+				$db_port        = '3306';
+		
+				global $mysqli;
+				$mysqli = new mysqli(
+					$db_host,
+					$db_user,
+					$db_pass,
+					$db_database,
+					$db_port
+				);
+		
+				if (mysqli_connect_errno()) {
+					printf("Connection to mysql failed miserably :(\n%s", mysqli_connect_error());
+				}
+		
+				$query = "SELECT * FROM india_data";
+				global $res;
+				if (!$res = $mysqli->query($query)) {
+					echo "Invalid query!!\n";
+				}
+		
+				while ($row = mysqli_fetch_array($res)) {
+					echo "<tr><td>" . $row["totalCases"] . "</td>"
+						. "<td>" . $row["recoveries"] . "</td><td>" . $row["deaths"]
+						. "</td></tr>";
+				}
+				echo "</table>";
+		
+				$mysqli->close();
+		
+				?>
+
+			</table>
+			<footer>
+				<a href="#state" class="button large scrolly">view India statewise data</a>
+			</footer>
+		</div>
+	</article>
+
+	<!-- Contact -->
+	<article id="contact" class="wrapper style4">
+		<div class="container medium">
+			<header>
+				<h2>Statewise COVID-19 data</h2>
+				<p>all data taken from <a href="https://indiacovid19.github.io/">indiacovid19.github.io</a>
+				<p>
+			</header>
+
+			<table>
+				<tr>
+					<th>State name</th>
+					<th>Total Cases(confirmed COVID-19)</th>
+					<th>Recovered patient count</th>
+					<th>total deaths(due to covid19)</th>
+				</tr>
+
+				<?php
+		
+				$db_host        = '127.0.0.1';
+				$db_user        = 'fastbyte';
+				$db_pass        = 'aldee220202';
+				$db_database    = 'test';
+				$db_port        = '3306';
+		
+				global $mysqli;
+				$mysqli = new mysqli(
+					$db_host,
+					$db_user,
+					$db_pass,
+					$db_database,
+					$db_port
+				);
+		
+				if (mysqli_connect_errno()) {
+					printf("Connection to mysql failed miserably :(\n%s", mysqli_connect_error());
+				}
+		
+				$query = "SELECT * FROM regional_data";
+				global $res;
+				if (!$res = $mysqli->query($query)) {
+					echo "Invalid query!!\n";
+				}
+		
+				while ($row = mysqli_fetch_array($res)) {
+					echo "<tr><td>" . $row["statename"] . "</td>"
+						. "<td>" . $row["totalCases"] . "</td><td>" . $row["recoveries"] . "</td><td>" . $row["deaths"]
+						. "</td></tr>";
+				}
+				echo "</table>";
+		
+				$mysqli->close();
+		
+				?>
+
+			</table>
+
+			<div class="col-12">
+				<hr />
+				<h3>Creators of this site:</h3>
+				<ul class="social">
+					<li>Abi</li>
+					<li>Ajay</li>
+					<li>Aldeesh</li>
+					<li>Jacob</li>
+				</ul>
+				<hr />
+			</div>
+		</div>
+		<footer>
+			<ul id="copyright">
+				<li>&copy; just_a_small_project. All rights reserved.</li>
+			</ul>
+		</footer>
+		</div>
+	</article>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/jquery.scrolly.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
