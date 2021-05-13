@@ -13,7 +13,7 @@ mysql_config = {
 
 con = mysql.connector.connect(**mysql_config)
 
-# Create 2 cursors for each table
+# Create 4 cursors for each table
 cura = con.cursor()
 curb = con.cursor()
 curc = con.cursor()
@@ -21,44 +21,55 @@ curd = con.cursor()
 
 '''
 --------- Overall India_data -----------
-Drop the table and create new table
-To prevent it from appending data
+
+DATA taken from: https://api.rootnet.in/covid19-in/stats/latest
+
+table:
+    - total cases
+    - recoveries
+    - total deaths
+
 ----------------------------------------
 '''
-cura.execute('DROP TABLE India_Data')
+try:
+    cura.execute('DROP TABLE IF EXISTS india_data')
+except:
+    pass
+
 cura.execute(
     'CREATE  TABLE India_Data (totalCases BIGINT, recoveries BIGINT, deaths BIGINT)')
 
-# extract the json in formatted format
-f = open('data2.json')
-j = json.load(f)
+r = requests.get("https://api.rootnet.in/covid19-in/stats/latest").text
+j = json.loads(r)
 
-# parse the JSON
-# data -> summary
+
 country = (j.get('data')).get('summary')
 totalCases = int(country.get('total'))
 totlaRecoveries = int(country.get('discharged'))
 totalDeaths = int(country.get('deaths'))
 
-# sql query
 sql = "insert into {table} values (%s, %s, %s)"
 cura.execute(sql.format(table="India_Data"),
              (totalCases, totlaRecoveries, totalDeaths))
 
 '''
 --------- regional_data ---------
-drop the table create new
+
+DATA taken from: https://api.rootnet.in/covid19-in/stats/latest
+
 -> statename, totalcases, totalrecovered, deaths so far
 -----------------------------------
 '''
-curb.execute('DROP TABLE Regional_data;')
+try:
+    curb.execute('DROP TABLE Regional_data;')
+except:
+    pass
+
 curb.execute(
     'CREATE TABLE Regional_data (statename varchar(50), totalCases BIGINT, recoveries BIGINT, deaths BIGINT);')
 
-# data -> regional
 regional = (j.get('data')).get('regional')
 
-# since we have array of regions dictionary throw it in a for loop
 for i in regional:
     state = str(i.get('loc'))
     totalcases = int(i.get('totalConfirmed'))
@@ -121,10 +132,7 @@ table:
 r = requests.get(
     'https://mahabub81.github.io/covid-19-api/api/v1/countries.json').text
 
-# j -> list of dictionaries
 j = json.loads(r)
-
-print(j[0].keys())
 
 try:
     curd.execute("DROP TABLE IF EXISTS country_data")
@@ -141,11 +149,11 @@ for country in j:
     deaths = data.get('deaths')
     recovered = data.get('recovered')
     active = data.get('active')
-    print(name, confirmed, deaths, recovered, active)
-    
+
     curd.execute(sql.format(table="country_data"),
                  (name, active, confirmed, deaths, recovered))
 
 
-# Commit the changes to make them appear
+# Commit the changes to make save them
 con.commit()
+con.close()
