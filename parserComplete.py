@@ -2,7 +2,6 @@ import json
 import requests
 import mysql.connector
 
-# Connect to mysql server
 mysql_config = {
     'user': 'fastbyte',
     'password': 'aldee220202',
@@ -13,21 +12,16 @@ mysql_config = {
 
 con = mysql.connector.connect(**mysql_config)
 
-# Create 4 cursors for each table
 cura = con.cursor()
 curb = con.cursor()
 curc = con.cursor()
 curd = con.cursor()
+cure = con.cursor()
 
 '''
 --------- Overall India_data -----------
 
 DATA taken from: https://api.rootnet.in/covid19-in/stats/latest
-
-table:
-    - total cases
-    - recoveries
-    - total deaths
 
 ----------------------------------------
 '''
@@ -60,6 +54,7 @@ DATA taken from: https://api.rootnet.in/covid19-in/stats/latest
 -> statename, totalcases, totalrecovered, deaths so far
 -----------------------------------
 '''
+
 try:
     curb.execute('DROP TABLE Regional_data;')
 except:
@@ -154,6 +149,45 @@ for country in j:
                  (name, active, confirmed, deaths, recovered))
 
 
-# Commit the changes to make save them
+'''
+
+------------- Tamil Nadu district data ---------
+
+https://tn.data.gov.in/catalog/covid-19-statistics-tamil-nadu-11052021-source-media-bulletin-dated-11052021#web_catalog_tabs_block_10
+
+json file needs to be downloaded manually
+
+table:
+    - name 
+    - active 
+    - discharged 
+    - deaths 
+    - total
+
+'''
+
+try:
+    cure.execute('DROP TABLE IF EXISTS tndistrict_data')
+except:
+    pass
+
+cure.execute(
+    'CREATE  TABLE tndistrict_Data (district char(20), active BIGINT, recovered BIGINT, deaths BIGINT, total BIGINT)')
+
+sql = "insert into {table} values (%s, %s, %s, %s, %s)"
+
+with open('tndistrict.json') as f:
+    j = json.load(f)
+    # print(j.keys()) -> fields, data
+    j1 = j.get('data')
+    # print(type(j1)) -> list
+    j1 = j1[:len(j1)-3]
+    for district in j1:
+        sno, name, total, discharged, active, death = district
+        cure.execute(sql.format(table="tndistrict_data"),
+                     (name, active, discharged, death, total))
+
+
+# Commit the changes to make them appear
 con.commit()
 con.close()
